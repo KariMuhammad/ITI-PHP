@@ -89,6 +89,16 @@
                 </div>
             </fieldset>
 
+            <!-- Captcha Random text -->
+            <div class="mb-3">
+                <?php
+                    $strings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+                    $captcha = substr(str_shuffle($strings), 0, 5);
+                    echo "<p class='badge bg-secondary'>Captcha: $captcha</p>";
+                ?>
+                
+                <input type="text" name="captcha" id="captcha" pattern="<?php echo $captcha; ?>" title="Please answer the captcha question correctly">
+            </div>
             <input class="btn btn-success w-100" type="submit" value="Submit">
         </form>
     </div>

@@ -5,6 +5,7 @@
 
 
 $formData = $_GET;
+unset($formData["skills"]);
 ?>
 
 <!DOCTYPE html>
@@ -29,11 +30,23 @@ $formData = $_GET;
         <h1>Personal Information Data</h1>
         <?php foreach ($formData as $key => $value) {
             echo "<div class='row'>";
-            echo "<p class='text-capitalize'>$key: </p>";
+            echo "<p class='col text-capitalize '>$key: </p>";
             echo "<p class='col'>$value</p>";
             echo "</div>";
         }
         ?>
+
+        <h1>Skills</h1>
+        <div class="gap-2">
+            <?php
+            if (isset($_GET["skills"])) {
+                foreach ($_GET["skills"] as $skill) {
+                    echo "<span class='col badge bg-primary text-white text-uppercase mx-1 px-4 py-2'>$skill</span>";
+                }
+            }
+            ?>
+        </div>
+    </div>
 
 </body>
 
