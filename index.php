@@ -110,6 +110,7 @@ if (!$isEditMode) {
 
                     <!-- Hidden field for edit mode -->
                     <?php if ($isEditMode): ?>
+                        <?= $editId ?>
                         <input type="hidden" name="edit_id" value="<?= ($editId) ?>">
                     <?php endif; ?>
 

@@ -28,12 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Find the record to edit
         foreach ($records as $indx => $r) {
             if ($r['id'] === $editId) {
-                $recordIndex = $i;
+                $recordIndex = $indx;
                 break;
             }
         }
 
         if ($recordIndex === null) {
+            var_dump($recordIndex);
+            die('Record not found');
             header('Location: index.php?error=' . urlencode('Record not found.'));
             exit;
         }
