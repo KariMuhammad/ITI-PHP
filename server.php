@@ -1,53 +1,127 @@
 <?php
+session_start();
 
-// Show all data sent in index.php form
-// firstname, lastname, address, country, gender, skills, username,password, department
+define('DATA_FILE', __DIR__ . '/data/users.csv');
 
 
-$formData = $_GET;
-unset($formData["skills"]);
-?>
+include_once 'utils.php';
 
-<!DOCTYPE html>
-<html lang="en">
+// ─── Handle Form Submission (POST) ──────────────────────────────────────────
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Data</title>
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    <!-- import bootstrap css -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-</head>
+    $editId = trim($_POST['edit_id'] ?? '');
+    $isEditMode = !empty($editId);
 
-<body>
-    <header>
-        <h1 class="text-center">Day 1</h1>
-        <p class="text-center">Form Handling</p>
-    </header>
-
-    <div class="container">
-        <h1>Personal Information Data</h1>
-        <?php foreach ($formData as $key => $value) {
-            echo "<div class='row'>";
-            echo "<p class='col text-capitalize '>$key: </p>";
-            echo "<p class='col'>$value</p>";
-            echo "</div>";
+// ─── Handle Create Form ──────────────────────────────────────────    
+    if (!$isEditMode) {
+        $captchaInput = trim($_POST['captcha'] ?? '');
+        if ($captchaInput !== ($_SESSION['captcha'] ?? '')) {
+            header('Location: index.php?error=' . urlencode('Wrong captcha try again.'));
+            exit;
         }
-        ?>
+    }
 
-        <h1>Skills</h1>
-        <div class="gap-2">
-            <?php
-            if (isset($_GET["skills"])) {
-                foreach ($_GET["skills"] as $skill) {
-                    echo "<span class='col badge bg-primary text-white text-uppercase mx-1 px-4 py-2'>$skill</span>";
-                }
+    $skills = isset($_POST['skills']) ? implode('|', $_POST['skills']) : '';
+
+// ─── Handle Edit Form ──────────────────────────────────────────    
+    if ($isEditMode) {
+        $records = readAllRecords();
+        $recordIndex = null;
+
+        // Find the record to edit
+        foreach ($records as $indx => $r) {
+            if ($r['id'] === $editId) {
+                $recordIndex = $i;
+                break;
             }
-            ?>
-        </div>
-    </div>
+        }
 
-</body>
+        if ($recordIndex === null) {
+            header('Location: index.php?error=' . urlencode('Record not found.'));
+            exit;
+        }
 
-</html>
+        // Build updated record
+        $updatedRecord = [
+            'id' => $editId,
+            'firstname' => trim($_POST['firstname'] ?? ''),
+            'lastname' => trim($_POST['lastname'] ?? ''),
+            'country' => trim($_POST['country'] ?? ''),
+            'address' => trim($_POST['address'] ?? ''),
+            'gender' => trim($_POST['gender'] ?? ''),
+            'skills' => $skills,
+            'username' => trim($_POST['username'] ?? ''),
+            'password' => $existingPassword, // keep existing password by default
+            'department' => trim($_POST['department'] ?? ''),
+        ];
+
+        // If a new password was provided, hash it
+        $newPassword = trim($_POST['password'] ?? '');
+        if ($newPassword !== '') {
+            $updatedRecord['password'] = $newPassword;
+        }
+
+        // Replace the old record and save
+        $records[$recordIndex] = $updatedRecord;
+        writeAllRecords($records);
+
+        header('Location: table.php?updated=1');
+        exit;
+
+    } else {
+        $id = uniqid('u', true);
+
+        $newRecord = [
+            'id' => $id,
+            'firstname' => trim($_POST['firstname'] ?? ''),
+            'lastname' => trim($_POST['lastname'] ?? ''),
+            'country' => trim($_POST['country'] ?? ''),
+            'address' => trim($_POST['address'] ?? ''),
+            'gender' => trim($_POST['gender'] ?? ''),
+            'skills' => $skills,
+            'username' => trim($_POST['username'] ?? ''),
+            'password' => trim($_POST['password'] ?? ''),
+            'department' => trim($_POST['department'] ?? ''),
+        ];
+
+        $file = fopen(DATA_FILE, 'a');
+
+        if (!file_exists(DATA_FILE)) {
+            $headers = [
+                'id',
+                'firstname',
+                'lastname',
+                'country',
+                'address',
+                'gender',
+                'skills',
+                'username',
+                'password',
+                'department'
+            ];
+            fputcsv($file, $headers);
+        }
+
+        fputcsv($file, $newRecord);
+        fclose($file);
+
+        header('Location: index.php?success=1');
+        exit;
+    }
+}
+
+// ─── Handle DELETE ───────────────────────────────────────────────────────────
+
+if (isset($_GET['delete'])) {
+    $deleteId = $_GET['delete'];
+    $records = readAllRecords();
+
+    // Filter out the record with the matching ID
+    $records = array_filter($records, fn($r) => $r['id'] !== $deleteId);
+
+    writeAllRecords(array_values($records));
+
+    header('Location: table.php?deleted=1');
+    exit;
+}
