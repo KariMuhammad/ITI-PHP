@@ -1,8 +1,6 @@
 <?php
 session_start();
 
-// ─── Determine if we're in Edit Mode
-
 define('DATA_FILE', __DIR__ . '/data/users.csv');
 
 $isEditMode = false;
@@ -91,7 +89,6 @@ if (!$isEditMode) {
                         </p>
                     <?php else: ?>
                         <h1 class="h3 mb-1">User Registration</h1>
-                        <p class="mb-0 opacity-75">Fill in the details below to register a new user</p>
                     <?php endif; ?>
                 </div>
             </div>

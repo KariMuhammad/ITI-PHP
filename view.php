@@ -1,29 +1,7 @@
 <?php
 define('DATA_FILE', __DIR__ . '/data/users.csv');
 
-/**
- * Read all records from the CSV file.
- */
-function readAllRecords(): array
-{
-    if (!file_exists(DATA_FILE) || filesize(DATA_FILE) === 0) {
-        return [];
-    }
-
-    $records = [];
-    $file = fopen(DATA_FILE, 'r');
-    $headers = fgetcsv($file);
-
-    while (!feof($file)) {
-        $row = fgetcsv($file);
-        if ($row && count($row) === count($headers)) {
-            $records[] = array_combine($headers, $row);
-        }
-    }
-
-    fclose($file);
-    return $records;
-}
+include_once 'utils.php';
 
 // Get the requested ID
 $id = $_GET['id'] ?? null;
@@ -73,28 +51,10 @@ $skills = array_filter(explode('|', $record['skills']));
             border-radius: 12px 12px 0 0;
         }
 
-        .detail-card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
         .label-col {
             width: 160px;
             font-weight: 600;
             color: #6c757d;
-        }
-
-        .avatar-circle {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
         }
     </style>
 </head>
@@ -102,7 +62,7 @@ $skills = array_filter(explode('|', $record['skills']));
 <body>
     <div class="container py-5" style="max-width: 700px;">
 
-        <div class="detail-card">
+        <div class="card">
             <!-- Header -->
             <div class="page-header d-flex align-items-center gap-3">
                 <div>
@@ -117,7 +77,7 @@ $skills = array_filter(explode('|', $record['skills']));
             </div>
 
             <!-- Details -->
-            <div class="p-4">
+            <div class="card-body">
                 <h5 class="text-muted border-bottom pb-2 mb-3">Personal Information</h5>
                 <table class="">
                     <tr>

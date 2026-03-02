@@ -7,13 +7,10 @@ define('DATA_FILE', __DIR__ . '/data/users.csv');
 include_once 'utils.php';
 
 // ─── Handle Form Submission (POST) ──────────────────────────────────────────
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     $editId = trim($_POST['edit_id'] ?? '');
     $isEditMode = !empty($editId);
-
-// ─── Handle Create Form ──────────────────────────────────────────    
+    
     if (!$isEditMode) {
         $captchaInput = trim($_POST['captcha'] ?? '');
         if ($captchaInput !== ($_SESSION['captcha'] ?? '')) {
@@ -24,8 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $skills = isset($_POST['skills']) ? implode('|', $_POST['skills']) : '';
 
-// ─── Handle Edit Form ──────────────────────────────────────────    
-    if ($isEditMode) {
+    if ($isEditMode) { // Handle Edit Form
         $records = readAllRecords();
         $recordIndex = null;
 
@@ -52,15 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'gender' => trim($_POST['gender'] ?? ''),
             'skills' => $skills,
             'username' => trim($_POST['username'] ?? ''),
-            'password' => $existingPassword, // keep existing password by default
+            'password' => trim($_POST['password'] ?? ''),
             'department' => trim($_POST['department'] ?? ''),
         ];
-
-        // If a new password was provided, hash it
-        $newPassword = trim($_POST['password'] ?? '');
-        if ($newPassword !== '') {
-            $updatedRecord['password'] = $newPassword;
-        }
 
         // Replace the old record and save
         $records[$recordIndex] = $updatedRecord;
@@ -69,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: table.php?updated=1');
         exit;
 
-    } else {
+    } else { // Handle Create Form
         $id = uniqid('u', true);
 
         $newRecord = [
@@ -112,7 +102,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // ─── Handle DELETE ───────────────────────────────────────────────────────────
-
 if (isset($_GET['delete'])) {
     $deleteId = $_GET['delete'];
     $records = readAllRecords();

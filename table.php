@@ -54,17 +54,7 @@ $records = readAllRecords();
 <body>
     <div class="container py-5">
 
-        <!-- Header -->
-        <div class="page-header d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="h3 mb-1">All Registered Users</h1>
-                <p class="mb-0 opacity-75">
-                    Number of Records are
-                    <?= count($records) ?>
-                </p>
-            </div>
-            <a href="index.php" class="btn btn-light btn-sm">Add New User</a>
-        </div>
+       
 
         <!-- Table -->
         <div class="table-card">
