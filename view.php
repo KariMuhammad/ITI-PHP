@@ -1,6 +1,4 @@
 <?php
-define('DATA_FILE', __DIR__ . '/data/users.csv');
-
 include_once 'utils.php';
 
 // Get the requested ID
@@ -11,9 +9,15 @@ if (!$id) {
     exit;
 }
 
-// Find the record
-$records = readAllRecords();
-$record = null;
+// Find the record from database
+$record = readRecord($id);
+
+if (!$record) {
+    header('Location: table.php?error=' . urlencode('User not found.'));
+    exit;
+}
+
+$skills = array_filter(explode('|', $record['skills']));
 
 foreach ($records as $r) {
     if ($r['id'] === $id) {

@@ -1,8 +1,5 @@
 <?php
 session_start();
-
-define('DATA_FILE', __DIR__ . '/data/users.csv');
-
 include_once 'utils.php';
 
 $records = readAllRecords();
