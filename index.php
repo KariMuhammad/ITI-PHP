@@ -1,7 +1,6 @@
 <?php
 session_start();
-
-define('DATA_FILE', __DIR__ . '/data/users.csv');
+include_once 'utils.php';
 
 $isEditMode = false;
 $record = null;
@@ -10,30 +9,12 @@ $currentSkills = [];
 $editId = $_GET['id'] ?? null;
 
 if ($editId) {
-    // Load the record to edit
-    if (file_exists(DATA_FILE)) {
-        $file = fopen(DATA_FILE, 'r');
-        $headers = fgetcsv($file);
-        
-        while (!feof($file)) {
-            $row = fgetcsv($file);
-
-            if ($row) {
-                $r = array_combine($headers, $row);
-                if ($r['id'] === $editId) {
-                    $record = $r;
-                    $isEditMode = true;
-                    $currentSkills = array_filter(explode('|', $record['skills']));
-                    break;
-                }
-            }
-        }
-
-        fclose($file);
-    }
-    
-    if (!$record) {
-        header('Location: table.php');
+    $record = readRecord($editId);
+    if ($record) {
+        $isEditMode = true;
+        $currentSkills = array_filter(explode('|', $record['skills']));
+    } else {
+        header('Location: table.php?error=' . urlencode('User not found.'));
         exit;
     }
 }
