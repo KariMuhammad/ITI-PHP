@@ -2,6 +2,12 @@
 session_start();
 include_once 'utils.php';
 
+$is_admin = $_SESSION['username'] === 'Admin';
+if (!$is_admin) {
+    header('Location: auth/login.php');
+    exit;
+}
+
 $records = readAllRecords();
 ?>
 <!DOCTYPE html>
@@ -51,7 +57,21 @@ $records = readAllRecords();
 <body>
     <div class="container py-5">
 
-       
+        <div class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h4 mb-0">All Users</h1>
+            </div>
+            <div>
+                <?php if (isset($_SESSION['username'])): ?>
+                    <span class="small">Logged in as
+                        <strong><?= htmlspecialchars($_SESSION['username'], ENT_QUOTES) ?></strong></span>
+                <?php else: ?>
+                    <a href="auth/login.php" class="btn btn-sm btn-light">Login</a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+
 
         <!-- Table -->
         <div class="table-card">
