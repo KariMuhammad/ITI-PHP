@@ -288,7 +288,150 @@ if (!$isEditMode) {
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-   
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('userForm');
+            if (!form) return;
+
+            form.addEventListener('submit', function (e) {
+                var valid = true;
+
+                function setError(id, message) {
+                    var el = document.getElementById(id);
+                    if (el) {
+                        el.textContent = message || '';
+                    }
+                }
+
+                // clear previous errors
+                setError('firstname_error', '');
+                setError('lastname_error', '');
+                setError('country_error', '');
+                setError('address_error', '');
+                setError('gender_error', '');
+                setError('skills_error', '');
+                setError('username_error', '');
+                setError('password_error', '');
+                setError('department_error', '');
+                setError('captcha_error', '');
+                setError('profile_image_error', '');
+
+                var firstname = document.getElementById('firstname').value.trim();
+                var lastname = document.getElementById('lastname').value.trim();
+                var country = document.getElementById('country').value.trim();
+                var address = document.getElementById('address').value.trim();
+                var username = document.getElementById('username').value.trim();
+                var password = document.getElementById('password').value.trim();
+                var department = document.getElementById('department').value.trim();
+                var captchaInput = document.getElementById('captcha');
+                var profileInput = document.getElementById('profile_image');
+
+                var male = document.getElementById('male');
+                var female = document.getElementById('female');
+
+                var skillPhp = document.getElementById('skill_php');
+                var skillHtml = document.getElementById('skill_html');
+                var skillCss = document.getElementById('skill_css');
+                var skillJs = document.getElementById('skill_js');
+
+                var nameRegex = /^[A-Za-z\s]+$/;
+                var passwordRegex = /^[a-z0-9_]{8}$/;
+                var maxImageSize = 2 * 1024 * 1024; // 2MB
+
+                if (firstname === '') {
+                    setError('firstname_error', 'First name is required.');
+                    valid = false;
+                } else if (!nameRegex.test(firstname)) {
+                    setError('firstname_error', 'First name must not contain numbers.');
+                    valid = false;
+                }
+
+                if (lastname === '') {
+                    setError('lastname_error', 'Last name is required.');
+                    valid = false;
+                } else if (!nameRegex.test(lastname)) {
+                    setError('lastname_error', 'Last name must not contain numbers.');
+                    valid = false;
+                }
+
+                if (country === '') {
+                    setError('country_error', 'Country is required.');
+                    valid = false;
+                } else if (!nameRegex.test(country)) {
+                    setError('country_error', 'Country must not contain numbers.');
+                    valid = false;
+                }
+
+                if (address === '') {
+                    setError('address_error', 'Address is required.');
+                    valid = false;
+                }
+
+                if (!male.checked && !female.checked) {
+                    setError('gender_error', 'Gender is required.');
+                    valid = false;
+                }
+
+                var skillsChecked = (skillPhp && skillPhp.checked) ||
+                    (skillHtml && skillHtml.checked) ||
+                    (skillCss && skillCss.checked) ||
+                    (skillJs && skillJs.checked);
+
+                if (!skillsChecked) {
+                    setError('skills_error', 'Please select at least one skill.');
+                    valid = false;
+                }
+
+                if (username === '') {
+                    setError('username_error', 'Username is required.');
+                    valid = false;
+                } else if (!/^[A-Za-z][A-Za-z0-9]*$/.test(username)) {
+                    setError('username_error', 'Username must start with a letter and can include numbers.');
+                    valid = false;
+                }
+
+                if (password === '' && !<?= $isEditMode ? 'true' : 'false' ?>) {
+                    setError('password_error', 'Password is required.');
+                    valid = false;
+                } else if (password !== '' && !passwordRegex.test(password)) {
+                    setError(
+                        'password_error',
+                        'Password must be exactly 8 characters, only lowercase letters, numbers and underscore, no capital letters.'
+                    );
+                    valid = false;
+                }
+
+                if (department === '') {
+                    setError('department_error', 'Department is required.');
+                    valid = false;
+                }
+
+                // Profile image client-side checks (optional)
+                if (profileInput && profileInput.files && profileInput.files.length > 0) {
+                    var file = profileInput.files[0];
+                    var allowedTypes = ['image/jpeg', 'image/png'];
+
+                    if (allowedTypes.indexOf(file.type) === -1) {
+                        setError('profile_image_error', 'Only JPG and PNG images are allowed.');
+                        valid = false;
+                    } else if (file.size > maxImageSize) {
+                        setError('profile_image_error', 'Image is too large. Max 2MB.');
+                        valid = false;
+                    }
+                }
+
+                // Captcha client-side: only check presence; value is fully validated on server
+                if (captchaInput && captchaInput.value.trim() === '') {
+                    setError('captcha_error', 'Captcha is required.');
+                    valid = false;
+                }
+
+                if (!valid) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
