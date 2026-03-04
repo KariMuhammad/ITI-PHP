@@ -1,4 +1,5 @@
 <?php
+session_start();
 include_once 'utils.php';
 
 // Get the requested ID
@@ -11,23 +12,9 @@ if (!$id) {
 
 // Find the record from database
 $record = readRecord($id);
-
+// die(json_encode($record));
 if (!$record) {
     header('Location: table.php?error=' . urlencode('User not found.'));
-    exit;
-}
-
-$skills = array_filter(explode('|', $record['skills']));
-
-foreach ($records as $r) {
-    if ($r['id'] === $id) {
-        $record = $r;
-        break;
-    }
-}
-
-if (!$record) {
-    header('Location: table.php');
     exit;
 }
 
@@ -64,13 +51,17 @@ $skills = array_filter(explode('|', $record['skills']));
 </head>
 
 <body>
+    <!-- navbar -->
     <div class="container py-5" style="max-width: 700px;">
-
         <div class="card">
             <!-- Header -->
-            <div class="page-header d-flex align-items-center gap-3">
+            <div class="page-header d-flex align-items-center justify-content-between gap-3">
                 <div>
-                    <h1 class="h3 mb-1">
+        <div class="d-flex gap-3" id="navbarNav">
+            <a href="./table.php" class="btn btn-sm btn-light">Table</a>
+            <a href="./index.php" class="btn btn-sm btn-light">Create</a>
+        </div>
+    </nav>
                         <?= $record['firstname'] ?>
                         <?= $record['lastname'] ?>
                     </h1>
@@ -78,6 +69,15 @@ $skills = array_filter(explode('|', $record['skills']));
                         <?= $record['department'] ?> Department
                     </p>
                 </div>
+                <div>
+                    <?php if (isset($_SESSION['username'])): ?>
+                        <span class="small">Logged in as
+                            <strong><?= htmlspecialchars($_SESSION['username'], ENT_QUOTES) ?></strong></span>
+                        <a href="auth/logout.php" class="btn btn-sm btn-light">Logout</a>
+                </div>
+                <?php else: ?>
+                    <a href="auth/login.php" class="btn btn-sm btn-light">Login</a>
+                <?php endif; ?>
             </div>
 
             <!-- Details -->
