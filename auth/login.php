@@ -45,7 +45,7 @@ $error = $_GET['error'] ?? '';
 
             <?php if (!empty($error)): ?>
                 <div class="alert alert-danger m-3 mb-0" role="alert">
-                    <?= htmlspecialchars($error, ENT_QUOTES) ?>
+                    <?= $error ?>
                 </div>
             <?php endif; ?>
 
@@ -54,14 +54,13 @@ $error = $_GET['error'] ?? '';
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input class="form-control" type="text" name="username" id="username"
-                            pattern="[A-Za-z][A-Za-z0-9]*"
-                            title="Start with a letter, can include numbers" required>
+                            pattern="[A-Za-z][A-Za-z0-9]*" title="Start with a letter, can include numbers" required>
                     </div>
 
                     <div class="mb-4">
                         <label for="password" class="form-label">Password</label>
-                        <input class="form-control" type="password" name="password" id="password"
-                            placeholder="Password" required>
+                        <input class="form-control" type="password" name="password" id="password" placeholder="Password"
+                            required>
                     </div>
 
                     <button class="btn btn-primary w-100 btn-lg" type="submit">

@@ -23,15 +23,10 @@ function is_valid_username($field)
     return preg_match('/^[A-Za-z][A-Za-z0-9]*$/', $field) === 1;
 }
 
-// password rules:
-// - exactly 8 characters
-// - only lowercase letters, numbers, underscore
-// - no capital letters
 function check_password($field)
 {
     $field = (string) $field;
 
-    // exactly 8 chars
     if (strlen($field) !== 8) {
         return false;
     }
