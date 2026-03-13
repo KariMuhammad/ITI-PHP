@@ -1,13 +1,16 @@
 <?php
 require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/app/Repositories/UserRepository.php';
+require_once __DIR__ . '/app/Decorators/LoggingUserRepository.php';
 
 use App\Repositories\UserRepository;
+use App\Decorators\LoggingUserRepository;
 
 function getUserRepository() {
     static $repository = null;
     if ($repository === null) {
-        $repository = new UserRepository();
+        $baseRepository = new UserRepository();
+        $repository = new LoggingUserRepository($baseRepository);
     }
     return $repository;
 }
@@ -52,3 +55,4 @@ function usernameExists($username, $excludeId = null)
 function getUserByUsername($username)
 {
     return getUserRepository()->findByUsername($username);
+}
