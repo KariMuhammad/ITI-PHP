@@ -1,7 +1,8 @@
 <?php
 
-require_once '../Models/Model.php';
-require_once '../Database.php';
+namespace App\Models;
+
+
 
 class User extends Model {
     protected $fillable = [

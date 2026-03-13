@@ -3,7 +3,6 @@ namespace App\Decorators;
 
 use App\Repositories\UserRepositoryInterface;
 
-require_once __DIR__ . '/../Repositories/UserRepositoryInterface.php';
 
 class LoggingUserRepository implements UserRepositoryInterface {
     protected $repository;
