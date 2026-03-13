@@ -1,28 +1,21 @@
 <?php
 session_start();
-include_once '../utils.php';
+require_once __DIR__ . '/../utils.php';
+require_once __DIR__ . '/../app/Services/AuthService.php';
+
+use App\Services\AuthService;
 
 $username = trim($_POST['username'] ?? '');
 $password = trim($_POST['password'] ?? '');
 
-if ($username === '' || $password === '') {
-    header('Location: login.php?error=' . urlencode('Please fill in all fields.'));
-    exit;
-}
+$authService = new AuthService(getUserRepository());
+$result = $authService->attemptLogin($username, $password);
 
-// Check user in database by username
-$user = getUserByUsername($username);
-
-// For this lab we store plain password, so compare directly
-if ($user && $user['password'] === $password) {
-    $_SESSION['user_id'] = $user['id'];
-    $_SESSION['username'] = $user['username'];
-    $_SESSION['fullname'] = $user['firstname'] . ' ' . $user['lastname'];
-
+if ($result['success']) {
+    $user = $result['user'];
     header("Location: ../view.php?id=" . urlencode($user['id']));
     exit;
+} else {
+    header('Location: login.php?error=' . urlencode($result['error']));
+    exit;
 }
-
-// If we reach here, credentials are wrong
-header('Location: login.php?error=' . urlencode('Invalid username or password.'));
-exit;
