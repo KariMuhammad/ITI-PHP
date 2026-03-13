@@ -1,21 +1,17 @@
 <?php
-session_start();
-require_once __DIR__ . '/../utils.php';
+require_once __DIR__ . '/../Database.php';
+require_once __DIR__ . '/../app/Repositories/UserRepository.php';
+require_once __DIR__ . '/../app/Decorators/LoggingUserRepository.php';
 require_once __DIR__ . '/../app/Services/AuthService.php';
+require_once __DIR__ . '/../app/Http/Controllers/AuthController.php';
 
+use App\Repositories\UserRepository;
+use App\Decorators\LoggingUserRepository;
 use App\Services\AuthService;
+use App\Http\Controllers\AuthController;
 
-$username = trim($_POST['username'] ?? '');
-$password = trim($_POST['password'] ?? '');
-
-$authService = new AuthService(getUserRepository());
-$result = $authService->attemptLogin($username, $password);
-
-if ($result['success']) {
-    $user = $result['user'];
-    header("Location: ../view.php?id=" . urlencode($user['id']));
-    exit;
-} else {
-    header('Location: login.php?error=' . urlencode($result['error']));
-    exit;
-}
+$baseRepository = new UserRepository();
+$repository = new LoggingUserRepository($baseRepository);
+$authService = new AuthService($repository);
+$controller = new AuthController($authService);
+$controller->login();

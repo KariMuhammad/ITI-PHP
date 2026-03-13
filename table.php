@@ -1,12 +1,17 @@
 <?php
 session_start();
-include_once 'utils.php';
+require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/app/Repositories/UserRepository.php';
+require_once __DIR__ . '/app/Decorators/LoggingUserRepository.php';
+require_once __DIR__ . '/app/Http/Controllers/UserController.php';
 
-require_once "Models/User.php";
+use App\Repositories\UserRepository;
+use App\Decorators\LoggingUserRepository;
+use App\Http\Controllers\UserController;
 
-// $user = new User();
-
-// die($user.toString());
+$baseRepository = new UserRepository();
+$repository = new LoggingUserRepository($baseRepository);
+$controller = new UserController($repository);
 
 $is_admin = $_SESSION['username'] === 'Admin';
 if (!$is_admin) {
@@ -14,7 +19,7 @@ if (!$is_admin) {
     exit;
 }
 
-$records = readAllRecords();
+$records = $controller->getAllUsers();
 ?>
 <!DOCTYPE html>
 <html lang="en">
