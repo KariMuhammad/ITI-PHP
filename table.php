@@ -2,6 +2,12 @@
 session_start();
 include_once 'utils.php';
 
+require_once "Models/User.php";
+
+// $user = new User();
+
+// die($user.toString());
+
 $is_admin = $_SESSION['username'] === 'Admin';
 if (!$is_admin) {
     header('Location: auth/login.php');

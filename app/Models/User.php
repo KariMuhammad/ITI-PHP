@@ -1,6 +1,7 @@
 <?php
 
-use Models\Model;
+require_once '../Models/Model.php';
+require_once '../Database.php';
 
 class User extends Model {
     protected $fillable = [
@@ -33,6 +34,7 @@ class User extends Model {
         }
 
         public function save() {
-            
+            $connection = Database::getConnection();
+            echo "Saving user: " . $this->username;
         }
 }

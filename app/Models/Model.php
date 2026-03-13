@@ -1,10 +1,7 @@
 <?php
 
-namespace Models;
-
 /**
  * Class Model
- * @package Models
  */
 abstract class Model {
     protected $table;
