@@ -22,17 +22,17 @@ class AuthController {
 
         if ($result['success']) {
             $user = $result['user'];
-            header("Location: ../../view.php?id=" . urlencode($user['id']));
+            header("Location: ../view.php?id=" . urlencode($user['id']));
             exit;
         } else {
-            header('Location: ../login.php?error=' . urlencode($result['error']));
+            header('Location: login.php?error=' . urlencode($result['error']));
             exit;
         }
     }
 
     public function logout() {
         $this->authService->logout();
-        header("Location: ../login.php");
+        header("Location: login.php");
         exit;
     }
 }
