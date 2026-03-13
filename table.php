@@ -101,6 +101,7 @@ $records = $controller->getAllUsers();
                                 <th>Skills</th>
                                 <th>Username</th>
                                 <th>Department</th>
+                                <th>Image</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                         </thead>
@@ -139,6 +140,13 @@ $records = $controller->getAllUsers();
                                     <td><?= $record['username'] ?></td>
                                     <td>
                                         <?= $record['department'] ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($record['profile_image'])): ?>
+                                            <img src="<?= htmlspecialchars($record['profile_image']) ?>" alt="Profile" width="50" height="50" class="rounded-circle" style="object-fit: cover;">
+                                        <?php else: ?>
+                                            <span class="text-muted small">No Image</span>
+                                        <?php endif; ?>
                                     </td>
                                     <td>
                                         <div class="d-flex gap-2 justify-content-center action-btns">
