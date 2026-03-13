@@ -1,6 +1,18 @@
 <?php
 session_start();
-include_once 'utils.php';
+require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/app/Repositories/UserRepository.php';
+require_once __DIR__ . '/app/Decorators/LoggingUserRepository.php';
+require_once __DIR__ . '/app/Http/Controllers/UserController.php';
+
+use App\Repositories\UserRepository;
+use App\Decorators\LoggingUserRepository;
+use App\Http\Controllers\UserController;
+
+$baseRepository = new UserRepository();
+$repository = new LoggingUserRepository($baseRepository);
+$controller = new UserController($repository);
+
 $is_admin = $_SESSION['username'] === 'Admin';
 if (!$is_admin) {
     header('Location: auth/login.php');
@@ -14,7 +26,7 @@ $currentSkills = [];
 $editId = $_GET['id'] ?? null;
 
 if ($editId) {
-    $record = readRecord($editId);
+    $record = $controller->getUserById($editId);
     if ($record) {
         $isEditMode = true;
         $currentSkills = array_filter(explode('|', $record['skills']));
