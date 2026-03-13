@@ -1,22 +1,21 @@
 <?php
-$config = [
-    "host" => "localhost",
-    "dbname" => "os46",
-    "username" => "root",
-    "password" => "KerberOS123!@#"
-];
 
 class Database {
+    private $config = [
+        "host" => "127.0.0.1",
+        "dbname" => "os46",
+        "username" => "root",
+        "password" => "KerberOS123!@#"
+    ];
     private static $instance = null;
     private $connection;
 
     private function __construct() {
-        global $config;
         try {
             $this->connection = new PDO(
-                "mysql:host=" . $config['host'] . ";dbname=" . $config['dbname'] . ";charset=utf8mb4",
-                $config['username'],
-                $config['password'],
+                "mysql:host=" . $this->config['host'] . ";dbname=" . $this->config['dbname'] . ";charset=utf8mb4",
+                $this->config['username'],
+                $this->config['password'],
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
